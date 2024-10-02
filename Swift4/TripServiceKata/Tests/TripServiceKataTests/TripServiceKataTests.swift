@@ -26,11 +26,12 @@ class TripServiceKataTests: XCTestCase {
         XCTAssertEqual(trips?.count, nil)
     }
 
-    func testUserWithFriend() {
+    func testUserHasAFriendCanSeeFriendsTrips() {
         let user = User()
-        // let friend = User()
+        user.addTrip(Trip())
         user.addFriend(user)
         sut?.user = user
+
         let trips = try! sut?.getTripsByUser(user)
 
         XCTAssertEqual(trips?.count, 1)
@@ -40,5 +41,5 @@ class TripServiceKataTests: XCTestCase {
 class TestableTripService: TripService {
     var user: User?
     override func getLoggedUser() -> User? { user }
-    override func findTripsByUser(_: User) -> [Trip]? { nil }
+    override func findTripsByUser(_ user: User) -> [Trip]? { user.trips() }
 }
