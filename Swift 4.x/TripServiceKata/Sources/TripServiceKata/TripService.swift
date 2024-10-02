@@ -1,9 +1,7 @@
 import Foundation
 
-class TripService
-{
-    func getTripsByUser(_ user:User) throws -> [Trip]?
-    {
+class TripService {
+    func getTripsByUser(_ user:User) throws -> [Trip]? {
         var tripList:[Trip]? = nil
         let loggedUser = try! UserSession.sharedInstance.getLoggedUser()
         

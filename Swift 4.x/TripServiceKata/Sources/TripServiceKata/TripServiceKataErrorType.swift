@@ -1,11 +1,9 @@
 import Foundation
 
-enum UnitTestErrorType : Error
-{
+enum UnitTestErrorType : Error {
     case dependendClassCallDuringUnitTest
 }
 
-enum TripServiceErrorType : Error
-{
+enum TripServiceErrorType : Error {
     case userNotLoggedIn
 }
