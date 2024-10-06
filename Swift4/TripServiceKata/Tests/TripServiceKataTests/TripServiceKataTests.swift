@@ -2,14 +2,19 @@
 import XCTest
 
 class TripServiceKataTests: XCTestCase {
-    var sut: TestableTripService?
+    var sut: TripService?
+    var stubbedUserSession: UserSessionStub?
+    var tripDAOStub: TripDAOStub?
 
     override func setUp() {
-        sut = TestableTripService()
+        stubbedUserSession = UserSessionStub()
+        tripDAOStub = TripDAOStub()
+        sut = TripService(userSession: stubbedUserSession, tripDAO: tripDAOStub)
         super.setUp()
     }
 
     override func tearDown() {
+        stubbedUserSession = nil
         sut = nil
         super.tearDown()
     }
@@ -18,9 +23,18 @@ class TripServiceKataTests: XCTestCase {
         XCTAssertThrowsError(try sut?.getTripsByUser(User()))
     }
 
+    func testLoggedInUserCanLogIn() {
+        let user = User()
+        stubbedUserSession?.stubbedUser = user
+        stubbedUserSession?.stubbedIsUserLoggedIn = true
+
+        XCTAssertNoThrow(try sut?.getTripsByUser(User()))
+    }
+
     func testLoggedInUserWithNoFriendsHasNoTrips() {
         let user = User()
-        sut?.user = user
+        stubbedUserSession?.stubbedUser = user
+        stubbedUserSession?.stubbedIsUserLoggedIn = true
         let trips = try! sut?.getTripsByUser(user)
 
         XCTAssertEqual(trips?.count, nil)
@@ -28,9 +42,12 @@ class TripServiceKataTests: XCTestCase {
 
     func testUserHasAFriendCanSeeFriendsTrips() {
         let user = User()
-        user.addTrip(Trip())
+        let trip = Trip()
+        stubbedUserSession?.stubbedUser = user
+        stubbedUserSession?.stubbedIsUserLoggedIn = true
+        tripDAOStub?.stubbedTrips = [trip]
+
         user.addFriend(user)
-        sut?.user = user
 
         let trips = try! sut?.getTripsByUser(user)
 
@@ -38,8 +55,22 @@ class TripServiceKataTests: XCTestCase {
     }
 }
 
-class TestableTripService: TripService {
-    var user: User?
-    override func getLoggedUser() -> User? { user }
-    override func findTripsByUser(_ user: User) -> [Trip]? { user.trips() }
+class UserSessionStub: UserSession {
+    var stubbedIsUserLoggedIn: Bool = false
+    var stubbedUser: User?
+
+    override func isUserLoggedIn(_: User) throws -> Bool {
+        stubbedIsUserLoggedIn
+    }
+
+    override func getLoggedUser() throws -> User? {
+        stubbedUser
+    }
+}
+
+class TripDAOStub: TripDAO {
+    var stubbedTrips: [Trip]?
+    override func findTripsByUser(_: User) throws -> [Trip]? {
+        stubbedTrips
+    }
 }

@@ -5,6 +5,14 @@ import Foundation
 // global state
 
 class TripService {
+    let userSession: UserSession?
+    let tripDAO: TripDAO?
+
+    init(userSession: UserSession? = UserSession.sharedInstance, tripDAO: TripDAO?) {
+        self.userSession = userSession
+        self.tripDAO = tripDAO
+    }
+
     func getTripsByUser(_ user: User) throws -> [Trip]? {
         guard let loggedUser = getLoggedUser() else { throw TripServiceErrorType.userNotLoggedIn }
 
@@ -18,10 +26,10 @@ class TripService {
     }
 
     func getLoggedUser() -> User? {
-        try! UserSession.sharedInstance.getLoggedUser()
+        try! userSession?.getLoggedUser()
     }
 
     func findTripsByUser(_ user: User) -> [Trip]? {
-        try! TripDAO.findTripsByUser(user)
+        try! tripDAO?.findTripsByUser(user)
     }
 }
