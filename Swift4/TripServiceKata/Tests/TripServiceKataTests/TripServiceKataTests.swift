@@ -15,6 +15,7 @@ class TripServiceKataTests: XCTestCase {
 
     override func tearDown() {
         stubbedUserSession = nil
+        tripDAOStub = nil
         sut = nil
         super.tearDown()
     }
