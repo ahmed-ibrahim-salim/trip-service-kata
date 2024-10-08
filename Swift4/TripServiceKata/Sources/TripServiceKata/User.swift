@@ -1,26 +1,30 @@
 import Foundation
 
-func ==(lhs: User, rhs: User) -> Bool {
-    return lhs === rhs
+extension User: Equatable {
+    static func == (lhs: User, rhs: User) -> Bool {
+        return lhs === rhs
+    }
 }
 
-class User : Equatable {
-    private var userTrips:[Trip] = []
-    private var friends:[User] = []
-    
+class User {
+    private var userTrips: [Trip] = []
+    private var friends: [User] = []
+
     func getFriends() -> [User] {
-        return self.friends
+        return friends
     }
-    
-    func addFriend(_ friend:User) {
-        self.friends.append(friend)
+
+    func addFriend(_ friend: User) {
+        friends.append(friend)
     }
-    
+
     func trips() -> [Trip] {
-        return self.userTrips
+        return userTrips
     }
-    
-    func addTrip(_ trip:Trip) {
-        self.userTrips.append(trip)
+
+    func addTrip(_ trip: Trip) {
+        userTrips.append(trip)
     }
+
+    func isMyFriend(_ user: User) -> Bool { getFriends().contains(user) }
 }

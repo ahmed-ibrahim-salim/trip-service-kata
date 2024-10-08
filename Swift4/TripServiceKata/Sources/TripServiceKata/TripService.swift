@@ -1,8 +1,9 @@
 import Foundation
 
 // Code smells
-// nested conditionals
-// global state
+// 1- nested conditionals
+// 2- implicit dependencies
+// 3- feature envy, moved how to get my friends to the user object
 
 class TripService {
     let userSession: UserSession?
@@ -15,14 +16,7 @@ class TripService {
 
     func getTripsByUser(_ user: User) throws -> [Trip]? {
         guard let loggedUser = getLoggedUser() else { throw TripServiceErrorType.userNotLoggedIn }
-
-        for friend in user.getFriends() {
-            if friend == loggedUser {
-                return findTripsByUser(user)
-            }
-        }
-
-        return nil
+        return user.isMyFriend(loggedUser) ? findTripsByUser(user) : nil
     }
 
     func getLoggedUser() -> User? {
